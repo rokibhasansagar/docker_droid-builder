@@ -16,12 +16,6 @@ on:
     - '.github/workflows/builder.yml'
     branches:
     - 'master'
-  pull_request:
-    paths:
-    - 'Dockerfile'
-    - 'android-env-vars.sh'
-    branches:
-    - 'master'
 
 jobs:
 
