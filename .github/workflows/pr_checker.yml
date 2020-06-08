@@ -1,0 +1,29 @@
+name: Pull Requests Validator
+
+on:
+  pull_request:
+    paths:
+      - 'Dockerfile'
+    branches:
+      - 'patch'
+
+jobs:
+
+  pr_review:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USERNAME: fr3akyphantom
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Create & Push the Droid Builder Container
+      run: |
+         echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
+         make set_qemu
+         make ID=bionic builder NAME=bionic
+         make ID=focal builder NAME=focal
