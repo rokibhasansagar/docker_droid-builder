@@ -1,0 +1,56 @@
+# This is a basic workflow to help you get started with Actions
+
+name: AIO Docker Builder
+
+# Controls when the action will run. Triggers the workflow on push or pull request
+# events but only for the master branch
+on:
+  schedule:
+    # Runs at 03:00 UTC on the 7, 14, 21 and 28th of every month
+    - cron: '0 3 7,14,21,28 1-12 ?'
+  push:
+    paths:
+    - 'Dockerfile'
+    - 'android-env-vars.sh'
+    - 'Makefile'
+    - '.github/workflows/builder.yml'
+    branches:
+    - 'master'
+  pull_request:
+    paths:
+    - 'Dockerfile'
+    - 'android-env-vars.sh'
+    branches:
+    - 'master'
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    env:
+      DOCKER_USERNAME: fr3akyphantom
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Bypass Build
+      if: "contains(github.event.head_commit.message, '[skip ci]')"
+      run: echo -en "Bypassing the main build, because the commit message contains - [skip ci]" && exit 0
+
+    - name: Create & Push the Droid Builder Container
+      if: "! contains(github.event.head_commit.message, '[skip ci]')"
+      run: |
+         echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
+         make set_qemu
+         make bionic_worker
+         make focal_worker
+         make tester
+
+    - name: Refresh MicroBadger Metadata for Container Infos
+      if: "! contains(github.event.head_commit.message, '[skip ci]')"
+      run: |
+         curl -X POST "https://hooks.microbadger.com/images/fr3akyphantom/droid-builder/BvX646w7iSxCNiWg_M7-amdz4qo="
