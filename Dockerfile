@@ -23,7 +23,7 @@ ARG SHORTCODE
 
 # Install all required packages
 RUN set -xe \
-	&& if [ "${SHORTCODE}" = "bionic" ]; then UNIQ_PACKAGES="android-tools-adbd pxz libxcrypt-dev"; elif [ "${SHORTCODE}" = "focal" ]; then UNIQ_PACKAGES="python-is-python2 ninja-build libcrypt-dev"; fi \
+	&& if [ "${SHORTCODE}" = "bionic" ]; then UNIQ_PACKAGES="android-tools-adbd pxz libxcrypt-dev python-requests"; elif [ "${SHORTCODE}" = "focal" ]; then UNIQ_PACKAGES="python-is-python2 ninja-build libcrypt-dev"; fi \
 	&& apt-get update -q -y \
 	&& apt-get install -q -y --no-install-recommends \
 		# Core Apt Packages
@@ -42,7 +42,7 @@ RUN set -xe \
 		openjdk-8-jdk ca-certificates-java \
 		maven nodejs \
 		# Python packages
-		python-all-dev python3-dev \
+		python-all-dev python3-dev python3-requests \
 		# Compression tools/utils/libraries
 		zip unzip lzip lzop zlib1g-dev xzdec xz-utils pixz p7zip-full p7zip-rar zstd libzstd-dev lib32z1-dev \
 		# GNU C/C++ compilers and Build Systems
