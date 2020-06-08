@@ -3,7 +3,7 @@
 IMAGE_NAME  := droid-builder
 DOCKER_USERNAME := fr3akyphantom
 # DOCKER_PASSWORD is SECRET
-DOCKER_SLUG := "$(DOCKER_USERNAME)/$(IMAGE_NAME)"
+DOCKER_SLUG := $(DOCKER_USERNAME)/$(IMAGE_NAME)
 
 BUILD_DATE  :=  $(shell date -u +"%Y%m%d")
 
@@ -39,13 +39,21 @@ snapper :
 	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):$(NAME)-$(BUILD_DATE)
 	docker push $(DOCKER_SLUG):$(NAME)-$(BUILD_DATE)
 
+push_bionic : pusher
+	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):latest
+	docker push $(DOCKER_SLUG):latest
+
+push_focal : pusher
+	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):edge
+	docker push $(DOCKER_SLUG):edge
+
 bionic_worker :
 	$(MAKE) ID=bionic builder NAME=bionic
-	$(MAKE) pusher snapper NAME=bionic
+	$(MAKE) push_bionic snapper NAME=bionic
 
 focal_worker :
 	$(MAKE) ID=focal builder NAME=focal
-	$(MAKE) pusher snapper NAME=focal
+	$(MAKE) push_focal snapper NAME=focal
 
 test :
 	docker pull $(DOCKER_SLUG):$(NAME)
