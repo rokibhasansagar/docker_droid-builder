@@ -8,7 +8,7 @@ LABEL maintainer="fr3akyphantom <rokibhasansagar2014@outlook.com>"
 ENV \
 	DEBIAN_FRONTEND=noninteractive \
 	LANG=C.UTF-8 \
-	JAVA_OPTS=" -Xmx3840m " \
+	JAVA_OPTS=" -Xmx6G " \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
 	USE_CCACHE=1 \
@@ -86,9 +86,8 @@ RUN mkdir /home/builder/bin \
 	&& tar -xzf ghr_*_amd64.tar.gz \
 	&& cp ghr_*_amd64/ghr /home/builder/bin/ \
 	&& rm -rf ghr_* \
-	&& curl -sL https://github.com/fabianonline/telegram.sh/raw/master/telegram -o /home/builder/bin/telegram \
 	&& chmod a+rx /home/builder/bin/repo \
-	&& chmod a+x /home/builder/bin/ghr /home/builder/bin/telegram
+	&& chmod a+x /home/builder/bin/ghr
 
 RUN mkdir -p extra && cd extra \
 	&& wget -q https://ftp.gnu.org/gnu/make/make-4.3.tar.gz \
@@ -104,7 +103,7 @@ RUN mkdir -p extra && cd extra \
 		cd ..; fi \
 	&& git clone https://github.com/ccache/ccache.git \
 	&& cd ccache \
-	&& git checkout -q v3.7.9 \
+	&& git checkout -q v3.7.10 \
 	&& ./autogen.sh && ./configure --disable-man && make -j8 && make install \
 	&& cd ../.. \
 	&& rm -rf extra
@@ -130,5 +129,5 @@ VOLUME [/home/builder]
 VOLUME [/srv/ccache]
 
 # Set default ccache size
-RUN CCACHE_DIR=/srv/ccache ccache -M 8G
+RUN CCACHE_DIR=/srv/ccache ccache -M 5G
 
