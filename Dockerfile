@@ -8,7 +8,7 @@ LABEL maintainer="fr3akyphantom <rokibhasansagar2014@outlook.com>"
 ENV \
 	DEBIAN_FRONTEND=noninteractive \
 	LANG=C.UTF-8 \
-	JAVA_OPTS=" -Xmx6G " \
+	JAVA_OPTS=" -Xmx7G " \
 	JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 \
 	PATH=~/bin:/usr/local/bin:/home/builder/bin:$PATH \
 	USE_CCACHE=1 \
@@ -73,13 +73,15 @@ RUN set -xe \
 	&& echo "Set disable_coredump false" >> /etc/sudo.conf
 
 # Create user and home directory
-RUN mkdir -p /home/builder \
+RUN set -xe \
+	&& mkdir -p /home/builder \
 	&& useradd --no-create-home builder \
 	&& rsync -a /etc/skel/ /home/builder/ \
 	&& chown -R builder:builder /home/builder \
 	&& echo "builder ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
-RUN mkdir /home/builder/bin \
+RUN set -xe \
+	&& mkdir /home/builder/bin \
 	&& curl -sL https://github.com/GerritCodeReview/git-repo/raw/stable/repo -o /home/builder/bin/repo \
 	&& curl -s https://api.github.com/repos/tcnksm/ghr/releases/latest \
 		| grep "browser_download_url" | grep "amd64.tar.gz" | cut -d '"' -f 4 | wget -qi - \
@@ -89,7 +91,8 @@ RUN mkdir /home/builder/bin \
 	&& chmod a+rx /home/builder/bin/repo \
 	&& chmod a+x /home/builder/bin/ghr
 
-RUN mkdir -p extra && cd extra \
+RUN set -xe \
+	&& mkdir -p extra && cd extra \
 	&& wget -q https://ftp.gnu.org/gnu/make/make-4.3.tar.gz \
 	&& tar xzf make-4.3.tar.gz \
 	&& cd make-*/ \
@@ -120,14 +123,15 @@ RUN chmod a+x /etc/android-env-vars.sh \
 	&& echo "source /etc/android-env-vars.sh" >> /etc/bash.bashrc
 
 # Set up udev rules for adb
-RUN curl --create-dirs -sL -o /etc/udev/rules.d/51-android.rules -O -L \
+RUN set -xe \
+	&& curl --create-dirs -sL -o /etc/udev/rules.d/51-android.rules -O -L \
 		https://raw.githubusercontent.com/M0Rf30/android-udev-rules/master/51-android.rules \
 	&& chmod 644 /etc/udev/rules.d/51-android.rules \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
 VOLUME [/home/builder]
+VOLUME [/home/builder/android]
 VOLUME [/srv/ccache]
 
 # Set default ccache size
 RUN CCACHE_DIR=/srv/ccache ccache -M 5G
-
