@@ -25,10 +25,6 @@ BUILDFLAGS  := \
 	--build-arg CODENAME=$(NAME) \
 	--build-arg SHORTCODE="${ID}"
 
-set_qemu :
-	docker pull multiarch/qemu-user-static:register
-	docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
 builder :
 	docker build . $(BUILDFLAGS) $(LABELS)
 
@@ -64,5 +60,4 @@ tester :
 	$(MAKE) test NAME=bionic
 	$(MAKE) test NAME=focal
 
-do_all : set_qemu bionic_worker focal_worker
-
+do_all : bionic_worker focal_worker
