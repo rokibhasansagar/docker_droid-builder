@@ -30,11 +30,11 @@ jobs:
         ref: ${{ github.event.inputs.git-ref }}
 
     - name: Prepare Docker Environment
-      run: echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin 2&>/dev/null
+      run: echo "$DOCKER_PASSWORD" | docker login -u $DOCKER_USERNAME --password-stdin
 
     - name: Create & Push the Bionic Droid Builder Container
       run: make ${{ matrix.platform }}_worker
 
     - name: Pull & Run/Test the Bionic Droid Builder Container
-      if: github.event.inputs.platform == 'bionic' || github.event.inputs.platform == 'all'
       run: make test NAME=${{ matrix.platform }}
+
