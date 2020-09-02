@@ -55,7 +55,7 @@ RUN set -xe \
 		ncurses-bin libncurses5-dev lib32ncurses5-dev bc libreadline-gplv2-dev libsdl1.2-dev libtinfo5 \
 		# Misc utils
 		file gawk xterm screen rename tree schedtool software-properties-common \
-		dos2unix jq flex bison gperf exfat-utils exfat-fuse libb2-dev pngcrush imagemagick \
+		dos2unix jq flex bison gperf exfat-utils exfat-fuse libb2-dev pngcrush imagemagick optipng advancecomp \
 		# LTS specific Unique packages
 		${UNIQ_PACKAGES} \
 		# Additional
@@ -100,13 +100,13 @@ RUN set -xe \
 	&& cd .. \
 	&& if [ "${SHORTCODE}" = "bionic" ]; then \
 		git clone https://github.com/ninja-build/ninja.git; \
-		cd ninja; git checkout -q v1.10.0; \
+		cd ninja; git checkout -q v1.10.1; \
 		./configure.py --bootstrap; \
 		install ./ninja /usr/local/bin/ninja; \
 		cd ..; fi \
 	&& git clone https://github.com/ccache/ccache.git \
 	&& cd ccache \
-	&& git checkout -q v3.7.10 \
+	&& git checkout -q v3.7.11 \
 	&& ./autogen.sh && ./configure --disable-man && make -j8 && make install \
 	&& cd ../.. \
 	&& rm -rf extra
@@ -130,8 +130,11 @@ RUN set -xe \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
 VOLUME [/home/builder]
-VOLUME [/home/builder/android]
 VOLUME [/srv/ccache]
 
-# Set default ccache size
 RUN CCACHE_DIR=/srv/ccache ccache -M 5G
+RUN chown builder:builder /srv/ccache
+
+USER builder
+RUN whoami
+
