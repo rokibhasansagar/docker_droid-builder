@@ -80,6 +80,8 @@ RUN set -xe \
 	&& chown -R builder:builder /home/builder \
 	&& echo "builder ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
 
+WORKDIR /home
+
 RUN set -xe \
 	&& mkdir /home/builder/bin \
 	&& curl -sL https://github.com/GerritCodeReview/git-repo/raw/stable/repo -o /home/builder/bin/repo \
@@ -90,6 +92,8 @@ RUN set -xe \
 	&& rm -rf ghr_* \
 	&& chmod a+rx /home/builder/bin/repo \
 	&& chmod a+x /home/builder/bin/ghr
+
+WORKDIR /home/builder
 
 RUN set -xe \
 	&& mkdir -p extra && cd extra \
@@ -129,12 +133,10 @@ RUN set -xe \
 	&& chmod 644 /etc/udev/rules.d/51-android.rules \
 	&& chown root /etc/udev/rules.d/51-android.rules
 
-VOLUME [/home/builder]
-VOLUME [/srv/ccache]
-
-RUN CCACHE_DIR=/srv/ccache ccache -M 5G
-RUN chown builder:builder /srv/ccache
+RUN CCACHE_DIR=/srv/ccache ccache -M 5G \
+	&& chown builder:builder /srv/ccache
 
 USER builder
-RUN whoami
 
+VOLUME [/home/builder]
+VOLUME [/srv/ccache]
