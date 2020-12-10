@@ -104,15 +104,16 @@ RUN set -xe \
 	&& cd .. \
 	&& if [ "${SHORTCODE}" = "bionic" ]; then \
 		git clone https://github.com/ninja-build/ninja.git; \
-		cd ninja; git checkout -q v1.10.1; \
+		cd ninja; git checkout -q v1.10.2; \
 		./configure.py --bootstrap; \
 		install ./ninja /usr/local/bin/ninja; \
 		cd ..; fi \
 	&& git clone https://github.com/ccache/ccache.git \
-	&& cd ccache \
-	&& git checkout -q v3.7.11 \
-	&& ./autogen.sh && ./configure --disable-man && make -j8 && make install \
-	&& cd ../.. \
+	&& cd ccache && git checkout -q v4.1 \
+	&& mkdir build && cd build \
+	&& cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr .. \
+	&& make -j8 && make install \
+	&& cd ../../.. \
 	&& rm -rf extra
 
 RUN if [ "${SHORTCODE}" = "focal" ]; then \

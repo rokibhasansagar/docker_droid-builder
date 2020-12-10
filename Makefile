@@ -35,13 +35,13 @@ snapper :
 	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):$(NAME)-$(BUILD_DATE)
 	docker push $(DOCKER_SLUG):$(NAME)-$(BUILD_DATE)
 
+# Bionic will only have self tag from now on
 push_bionic : pusher
+
+# Focal will have the Default "latest" tag from now on
+push_focal : pusher
 	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):latest
 	docker push $(DOCKER_SLUG):latest
-
-push_focal : pusher
-	docker tag $(DOCKER_SLUG):$(NAME) $(DOCKER_SLUG):edge
-	docker push $(DOCKER_SLUG):edge
 
 bionic_worker :
 	$(MAKE) ID=bionic builder NAME=bionic

@@ -2,7 +2,7 @@
 
   <h1><i>Droid Builder - One Image To Build Them All</i></h1>
 
-  <h3><i>Standalone Docker Container based upon Updated Ubuntu Bionic 18.04 LTS for Building Android ROMs or Recovery Projects</i></h3>
+  <h3><i>Standalone Docker Container based upon Updated Ubuntu 18.04/20.04 LTS for Building Android ROMs or Recovery Projects</i></h3>
 
   [![Actions Status](https://github.com/rokibhasansagar/docker_droid-builder/workflows/AIO%20Docker%20Builder/badge.svg)](https://github.com/rokibhasansagar/docker_droid-builder/actions)
   [![Container Builder](https://img.shields.io/badge/Powered%20By-Github%20Actions-blue?logo=github-actions)](https://github.com/features/actions "Know about Github Actions")
@@ -23,7 +23,7 @@ _Focal-based Image Info and It's Size:_ [![Image Tag](https://images.microbadger
 
 You might want to start the _bash_ environment as _root user_ by running `sudo -s`.
 
-Now, you have choose on which platform you want to build. You got Bionic Beaver (18.04.4 LTS) and Focal Fossa (20.04 LTS).
+Now, you have choose on which platform you want to build. You got Bionic Beaver (18.04 LTS) and Focal Fossa (20.04 LTS).
 
 Pull the image of by running the following command.
 
@@ -36,6 +36,7 @@ docker pull fr3akyphantom/droid-builder:focal
 ## Run the Container
 
 Set `TAG` as "bionic" or "focal", according to your specified needs.
+By default, "latest" tag is reserved for "focal" container (Ubuntu 18.04 is too old now).
 
 ```bash
 docker run --privileged --rm -i \
@@ -80,10 +81,11 @@ git clone https://github.com/${DEMO_USER}/${DEVICE_REPONAME} device/${VENDOR}/${
 # Start the Build Process
 export ALLOW_MISSING_DEPENDENCIES=true
 source build/envsetup.sh
-lunch ${BUILD_LUNCH}
+# Set FLAVOR as "eng" or "userdebug"
+lunch omni_${CODENAME}-${FLAVOR}
 
 # you can now delete the .repo folder if you need more space,
-# but it is not recommended for multi-build or shared projects
+# but it is not recommended for multiple builds or shared projects
 
 # build only recovery image or make full ROM/otapackage
 make -j$(nproc --all) recoveryimage || make -j$(($(nproc --all) / 2)) otapackage
@@ -91,10 +93,4 @@ make -j$(nproc --all) recoveryimage || make -j$(($(nproc --all) / 2)) otapackage
 
 ### Well, there you have it!
 Do away with your imagination.
-
-
-
-
-
-
 
