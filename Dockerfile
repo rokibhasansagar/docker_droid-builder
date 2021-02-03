@@ -139,5 +139,4 @@ RUN CCACHE_DIR=/srv/ccache ccache -M 5G \
 
 USER builder
 
-VOLUME [/home/builder]
-VOLUME [/srv/ccache]
+VOLUME ["/home/builder", "/srv/ccache"]
