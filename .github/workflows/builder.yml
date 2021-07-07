@@ -60,5 +60,5 @@ jobs:
 
     - name: Refresh MicroBadger Metadata for Container Infos
       if: "! contains(github.event.head_commit.message, '[skip ci]')"
-      run: curl -X POST "https://hooks.microbadger.com/images/fr3akyphantom/droid-builder/BvX646w7iSxCNiWg_M7-amdz4qo="
+      run: curl -X POST "https://hooks.microbadger.com/images/fr3akyphantom/droid-builder/BvX646w7iSxCNiWg_M7-amdz4qo=" || true
 
